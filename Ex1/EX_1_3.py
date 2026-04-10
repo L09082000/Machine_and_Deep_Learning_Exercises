@@ -1,4 +1,4 @@
-## Exercise 1.2 – Regression analysis
+## Exercise 1.3 – Regression analysis
 
 # Import libraries
 import pandas as pd
