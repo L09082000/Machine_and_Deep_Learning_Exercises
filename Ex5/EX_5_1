@@ -1,0 +1,53 @@
+## Exercise 5 – Support Vector Machines
+
+# Import libraries
+import pandas as pd
+import matplotlib.pyplot as plt
+
+from sklearn.model_selection import train_test_split
+from sklearn.svm import SVC
+from sklearn.metrics import accuracy_score, confusion_matrix
+from sklearn.preprocessing import StandardScaler, LabelEncoder
+
+# Load data
+df = pd.read_csv('https://archive.ics.uci.edu/ml/machine-learning-databases/car/car.data', header=None)
+
+# Define the features and target variable
+X = df.iloc[:, :-1].values  # All columns except the last one
+y = df.iloc[:, -1].values   # The last column is the target variable
+
+# Encode categorical variables using LabelEncoder
+le = LabelEncoder()
+for i in range(X.shape[1]):
+    if isinstance(X[0][i], str):
+        X[:, i] = le.fit_transform(X[:, i])
+
+# Encode the target variable
+le_y = LabelEncoder()
+y = le_y.fit_transform(y)
+
+# Split data into training and testing
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
+
+# Scale the numeric features using StandardScaler
+sc = StandardScaler()
+X_train = sc.fit_transform(X_train)
+X_test = sc.transform(X_test)
+
+# Create the SVM classifier
+clf = SVC(kernel='rbf', C=5, gamma=0.4) # be carefull with C bigger than 10
+
+# Train the SVM classifier
+clf.fit(X_train, y_train)
+
+# Predict the test set results
+y_pred = clf.predict(X_test)
+
+# Transform the predicted and actual labels back to original categories
+y_pred = le_y.inverse_transform(y_pred)
+y_test = le_y.inverse_transform(y_test)
+
+# Calculate accuracy and confusion matrix
+accuracy = accuracy_score(y_test, y_pred)
+print(f"Accuracy: {accuracy:.4f}")
+print("Confusion Matrix: \n", confusion_matrix(y_test, y_pred))
